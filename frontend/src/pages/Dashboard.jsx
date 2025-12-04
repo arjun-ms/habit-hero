@@ -5,10 +5,11 @@ import HabitCard from "../components/HabitCard";
 
 function Dashboard() {
   const [habits, setHabits] = useState([]);
-  const navigate = useNavigate();
-
   const [filter, setFilter] = useState("all");
   const [categories, setCategories] = useState([]);
+  const [showSuggestOptions, setShowSuggestOptions] = useState(false);
+
+  const navigate = useNavigate();
 
   const loadHabits = () => {
     getHabits().then((data) => {
@@ -31,8 +32,10 @@ function Dashboard() {
 
   return (
     <div className="max-w-3xl mx-auto p-6">
-      <div className="flex justify-between items-center mb-6">
+      {/* Header: title + filters + actions */}
+      <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
         <h2 className="text-3xl font-bold">Dashboard</h2>
+
         <div className="flex items-center gap-3">
           <label className="text-gray-600">Category:</label>
           <select
@@ -50,14 +53,24 @@ function Dashboard() {
           </select>
         </div>
 
-        <Link
-          to="/create"
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
-        >
-          + New Habit
-        </Link>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowSuggestOptions(true)}
+            className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition"
+          >
+            Suggest Habits
+          </button>
+
+          <Link
+            to="/create"
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+          >
+            + New Habit
+          </Link>
+        </div>
       </div>
 
+      {/* Habit list */}
       {habits.length === 0 ? (
         <p className="text-gray-600">No habits yet. Create one!</p>
       ) : (
@@ -75,6 +88,42 @@ function Dashboard() {
                 }}
               />
             ))}
+        </div>
+      )}
+
+      {/* Suggest Habits options modal */}
+      {showSuggestOptions && (
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-xl shadow-lg w-80 text-center space-y-4">
+            <h2 className="text-xl font-bold">Suggest Habits</h2>
+
+            <button
+              onClick={() => {
+                setShowSuggestOptions(false);
+                navigate("/suggest/existing");
+              }}
+              className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              Based on existing habits
+            </button>
+
+            <button
+              onClick={() => {
+                setShowSuggestOptions(false);
+                navigate("/suggest/goals");
+              }}
+              className="w-full px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+            >
+              Based on personal goals
+            </button>
+
+            <button
+              onClick={() => setShowSuggestOptions(false)}
+              className="text-gray-500 text-sm hover:underline"
+            >
+              Cancel
+            </button>
+          </div>
         </div>
       )}
     </div>
