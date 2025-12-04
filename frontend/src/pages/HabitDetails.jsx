@@ -5,16 +5,14 @@ import { getLogsForHabit, createLog } from "../api/logs";
 import { getHabitAnalytics } from "../api/analytics";
 import Calendar from "../components/Calendar";
 
-
 function HabitDetails() {
   const { id } = useParams();
+  const habitId = Number(id);
 
   const [habit, setHabit] = useState(null);
   const [logs, setLogs] = useState([]);
   const [analytics, setAnalytics] = useState(null);
   const [note, setNote] = useState("");
-
-  const habitId = Number(id);
 
   const loadHabitMeta = async () => {
     const all = await getHabits();
@@ -27,10 +25,14 @@ function HabitDetails() {
       getLogsForHabit(habitId),
       getHabitAnalytics(habitId),
     ]);
-    setLogs(logsData);
+  
+    // Sort newest → oldest by id
+    const sorted = [...logsData].sort((a, b) => b.id - a.id);
+  
+    setLogs(sorted);
     setAnalytics(analyticsData);
   };
-
+  
   useEffect(() => {
     loadHabitMeta();
     loadLogsAndAnalytics();
@@ -47,7 +49,7 @@ function HabitDetails() {
     });
 
     setNote("");
-    loadLogsAndAnalytics();
+    loadLogsAndAnalytics(); // refresh
   };
 
   if (!habit) {
@@ -131,7 +133,7 @@ function HabitDetails() {
             </p>
             <p>
               <span className="font-semibold">Best days:</span>{" "}
-              {analytics.best_days.length > 0
+              {analytics.best_days?.length
                 ? analytics.best_days.join(", ")
                 : "N/A"}
             </p>
@@ -141,10 +143,10 @@ function HabitDetails() {
         )}
       </div>
 
+      {/* Calendar card */}
       <div className="bg-white p-5 rounded-xl shadow border">
         <Calendar logs={logs} />
       </div>
-
     </div>
   );
 }
