@@ -7,8 +7,22 @@ function Dashboard() {
   const [habits, setHabits] = useState([]);
   const navigate = useNavigate();
 
+  const [filter, setFilter] = useState("all");
+  const [categories, setCategories] = useState([]);
+
   const loadHabits = () => {
-    getHabits().then(setHabits);
+    getHabits().then((data) => {
+      setHabits(data);
+
+      // Extract unique non-null categories
+      const uniqueCats = [
+        ...new Set(
+          data.map((h) => h.category).filter((c) => c && c.trim() !== "")
+        ),
+      ];
+
+      setCategories(uniqueCats);
+    });
   };
 
   useEffect(() => {
@@ -19,6 +33,22 @@ function Dashboard() {
     <div className="max-w-3xl mx-auto p-6">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-3xl font-bold">Dashboard</h2>
+        <div className="flex items-center gap-3">
+          <label className="text-gray-600">Category:</label>
+          <select
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="border px-3 py-2 rounded-lg"
+          >
+            <option value="all">All</option>
+
+            {categories.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat.charAt(0).toUpperCase() + cat.slice(1)}
+              </option>
+            ))}
+          </select>
+        </div>
 
         <Link
           to="/create"
@@ -32,17 +62,19 @@ function Dashboard() {
         <p className="text-gray-600">No habits yet. Create one!</p>
       ) : (
         <div className="grid gap-4">
-          {habits.map((h) => (
-            <HabitCard
-              key={h.id}
-              habit={h}
-              onOpen={(id) => navigate(`/habit/${id}`)}
-              onDelete={async (id) => {
-                await deleteHabit(id);
-                loadHabits();
-              }}
-            />
-          ))}
+          {habits
+            .filter((h) => filter === "all" || h.category === filter)
+            .map((h) => (
+              <HabitCard
+                key={h.id}
+                habit={h}
+                onOpen={(id) => navigate(`/habit/${id}`)}
+                onDelete={async (id) => {
+                  await deleteHabit(id);
+                  loadHabits();
+                }}
+              />
+            ))}
         </div>
       )}
     </div>
