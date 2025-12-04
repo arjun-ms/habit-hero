@@ -3,6 +3,8 @@ import { useParams, Link } from "react-router-dom";
 import { getHabits } from "../api/habits";
 import { getLogsForHabit, createLog } from "../api/logs";
 import { getHabitAnalytics } from "../api/analytics";
+import Calendar from "../components/Calendar";
+
 
 function HabitDetails() {
   const { id } = useParams();
@@ -138,6 +140,11 @@ function HabitDetails() {
           <p className="text-gray-500">No analytics yet.</p>
         )}
       </div>
+
+      <div className="bg-white p-5 rounded-xl shadow border">
+        <Calendar logs={logs} />
+      </div>
+
     </div>
   );
 }
