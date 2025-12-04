@@ -5,6 +5,7 @@ import { getLogsForHabit, createLog, deleteLog } from "../api/logs";
 import { getHabitAnalytics } from "../api/analytics";
 import Calendar from "../components/Calendar";
 import { getMotivation } from "../api/motivation";
+import { analyzeNotes } from "../api/analysis";
 
 function HabitDetails() {
   const { id } = useParams();
@@ -17,6 +18,14 @@ function HabitDetails() {
 
   const [motivation, setMotivation] = useState("");
   const [loadingMotivation, setLoadingMotivation] = useState(false);
+
+  const [insights, setInsights] = useState(null);
+
+  const moodEmoji = {
+    positive: "😊",
+    neutral: "😐",
+    negative: "😞",
+  };
 
   const fetchMotivation = async () => {
     setLoadingMotivation(true);
@@ -193,6 +202,41 @@ function HabitDetails() {
           <p className="mt-4 italic text-gray-800 border-l-4 border-purple-500 pl-3">
             “{motivation}”
           </p>
+        )}
+      </div>
+
+      <div className="bg-white p-5 rounded-xl shadow border">
+        <h2 className="text-lg font-semibold mb-3">AI Mood Insights</h2>
+
+        <button
+          onClick={async () => {
+            try {
+              const data = await analyzeNotes(habitId);
+              setInsights(data);
+            } catch (error) {
+              console.error("Error analyzing notes:", error);
+              setInsights(null);
+            }
+          }}
+          className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700"
+        >
+          Analyze Mood From Notes
+        </button>
+
+        {insights && (
+          <div className="mt-4 p-3 bg-purple-50 border rounded text-gray-800">
+            <p>
+              <strong>Mood Trend:</strong> {insights.mood_trend}
+            </p>
+            <p>
+              <strong>Themes:</strong> {insights.themes.join(", ")}
+            </p>
+            <p>
+              <strong>Insight:</strong> {insights.insight}
+            </p>
+
+            <p className="text-4xl">{moodEmoji[insights.mood_trend]}</p>
+          </div>
         )}
       </div>
 
