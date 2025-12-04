@@ -1,23 +1,43 @@
 import React, { useEffect, useState } from "react";
-import { getHabits } from "../api/habits";
-import HabitCard from "../components/HabitCard.jsx";
+import { useNavigate, Link } from "react-router-dom";
+import { getHabits, deleteHabit } from "../api/habits";
+import HabitCard from "../components/HabitCard";
 
 function Dashboard() {
   const [habits, setHabits] = useState([]);
+  const navigate = useNavigate();
 
-  useEffect(() => {
+  const loadHabits = () => {
     getHabits().then((data) => {
       console.log("Loaded habits:", data);
       setHabits(data);
     });
+  };
+
+  useEffect(() => {
+    loadHabits();
   }, []);
 
+  const handleOpen = (id) => navigate(`/habit/${id}`);
+  const handleDelete = async (id) => {
+    await deleteHabit(id);
+    loadHabits();
+  };
+
   return (
-    <div>
+    <div style={{ padding: "16px" }}>
       <h2>Dashboard</h2>
-      {habits.length === 0 && <p>No habits yet</p>}
+      <p>
+        <Link to="/create">+ Create a new habit</Link>
+      </p>
+      {habits.length === 0 && <p>No habits yet. Create one!</p>}
       {habits.map((h) => (
-        <HabitCard key={h.id} habit={h} onOpen={() => {}} />
+        <HabitCard
+          key={h.id}
+          habit={h}
+          onOpen={handleOpen}
+          onDelete={handleDelete}
+        />
       ))}
     </div>
   );

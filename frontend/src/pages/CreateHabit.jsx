@@ -1,16 +1,22 @@
-const CreateHabit = () => {
-    const submit = async (form) => {
-      await createHabit(form);
-      window.location.href = "/";
-    };
-  
-    return (
-      <div>
-        <h2>Create Habit</h2>
-        <HabitForm onSubmit={submit} />
-      </div>
-    );
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { createHabit } from "../api/habits";
+import HabitForm from "../components/HabitForm";
+
+function CreateHabit() {
+  const navigate = useNavigate();
+
+  const handleSubmit = async (form) => {
+    await createHabit(form);
+    navigate("/");
   };
-  
-  export default CreateHabit;
-  
+
+  return (
+    <div style={{ padding: "16px" }}>
+      <h2>Create Habit</h2>
+      <HabitForm onSubmit={handleSubmit} />
+    </div>
+  );
+}
+
+export default CreateHabit;
