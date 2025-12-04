@@ -4,6 +4,7 @@ import { getHabits } from "../api/habits";
 import { getLogsForHabit, createLog, deleteLog } from "../api/logs";
 import { getHabitAnalytics } from "../api/analytics";
 import Calendar from "../components/Calendar";
+import { getMotivation } from "../api/motivation";
 
 function HabitDetails() {
   const { id } = useParams();
@@ -13,6 +14,23 @@ function HabitDetails() {
   const [logs, setLogs] = useState([]);
   const [analytics, setAnalytics] = useState(null);
   const [note, setNote] = useState("");
+
+  const [motivation, setMotivation] = useState("");
+  const [loadingMotivation, setLoadingMotivation] = useState(false);
+
+  const fetchMotivation = async () => {
+    setLoadingMotivation(true);
+
+    const recentNotes = logs
+      .slice(0, 5)
+      .map((l) => l.note)
+      .join(", ");
+
+    const quote = await getMotivation(habit.name, habit.category, recentNotes);
+
+    setMotivation(quote);
+    setLoadingMotivation(false);
+  };
 
   const loadHabitMeta = async () => {
     const all = await getHabits();
@@ -158,6 +176,23 @@ function HabitDetails() {
           </div>
         ) : (
           <p className="text-gray-500">No analytics yet.</p>
+        )}
+      </div>
+
+      <div className="bg-white p-5 rounded-xl shadow border">
+        <h2 className="text-lg font-semibold mb-3">AI Motivation</h2>
+
+        <button
+          onClick={fetchMotivation}
+          className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
+        >
+          {loadingMotivation ? "Generating..." : "Get Motivation"}
+        </button>
+
+        {motivation && (
+          <p className="mt-4 italic text-gray-800 border-l-4 border-purple-500 pl-3">
+            “{motivation}”
+          </p>
         )}
       </div>
 
