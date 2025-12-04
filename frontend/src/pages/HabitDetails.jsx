@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { getHabits } from "../api/habits";
-import { getLogsForHabit, createLog } from "../api/logs";
+import { getLogsForHabit, createLog, deleteLog } from "../api/logs";
 import { getHabitAnalytics } from "../api/analytics";
 import Calendar from "../components/Calendar";
 
@@ -25,14 +25,14 @@ function HabitDetails() {
       getLogsForHabit(habitId),
       getHabitAnalytics(habitId),
     ]);
-  
+
     // Sort newest → oldest by id
     const sorted = [...logsData].sort((a, b) => b.id - a.id);
-  
+
     setLogs(sorted);
     setAnalytics(analyticsData);
   };
-  
+
   useEffect(() => {
     loadHabitMeta();
     loadLogsAndAnalytics();
@@ -73,6 +73,12 @@ function HabitDetails() {
         <p className="text-gray-600">{habit.frequency}</p>
         <p className="text-gray-500">{habit.category}</p>
       </div>
+      <Link
+        to={`/habit/${habitId}/edit`}
+        className="text-sm px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
+      >
+        Edit Habit
+      </Link>
 
       {/* Add check-in card */}
       <div className="bg-white p-5 rounded-xl shadow border">
@@ -104,10 +110,22 @@ function HabitDetails() {
             {logs.map((log) => (
               <li
                 key={log.id}
-                className="p-3 border rounded-lg bg-gray-50 text-gray-800"
+                className="p-3 border rounded-lg bg-gray-50 text-gray-800 flex justify-between items-center"
               >
-                <span className="font-semibold">{log.log_date}</span>
-                {log.note && <span> — {log.note}</span>}
+                <div>
+                  <span className="font-semibold">{log.log_date}</span>
+                  {log.note && <span> — {log.note}</span>}
+                </div>
+
+                <button
+                  onClick={async () => {
+                    await deleteLog(log.id);
+                    loadLogsAndAnalytics();
+                  }}
+                  className="text-sm px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                >
+                  Delete
+                </button>
               </li>
             ))}
           </ul>

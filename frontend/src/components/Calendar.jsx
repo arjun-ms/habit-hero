@@ -1,59 +1,104 @@
-import React from "react";
-import dayjs from "dayjs";
+import React, { useState } from "react";
 
 function Calendar({ logs }) {
-  const today = dayjs();
-  const startOfMonth = today.startOf("month");
-  const endOfMonth = today.endOf("month");
+  const today = new Date();
 
-  const startDay = startOfMonth.day(); // 0 = Sunday
-  const daysInMonth = today.daysInMonth();
+  const [currentMonth, setCurrentMonth] = useState(
+    new Date(today.getFullYear(), today.getMonth(), 1)
+  );
 
-  // Convert logs list to a fast lookup (Set)
-  const checkInDates = new Set(logs.map((l) => l.log_date));
+  const logDates = new Set(logs.map((l) => l.log_date));
 
-  // Build calendar days array
+  const year = currentMonth.getFullYear();
+  const month = currentMonth.getMonth();
+
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+
+  const daysInMonth = lastDay.getDate();
+  const startOffset = firstDay.getDay(); // 0 = Sunday, 1 = Monday, ...
+
   const days = [];
 
-  // Push empty cells before the 1st of the month
-  for (let i = 0; i < startDay; i++) {
+  // Empty cells before month start
+  for (let i = 0; i < startOffset; i++) {
     days.push(null);
   }
 
-  // Push actual days of the month
-  for (let day = 1; day <= daysInMonth; day++) {
-    days.push(day);
+  // Actual days
+  for (let d = 1; d <= daysInMonth; d++) {
+    days.push(new Date(year, month, d));
   }
 
-  return (
-    <div>
-      <h3 className="text-xl font-semibold mb-3">Calendar</h3>
+  // Navigation
+  const prevMonth = () => {
+    setCurrentMonth(new Date(year, month - 1, 1));
+  };
 
-      <div className="grid grid-cols-7 gap-2 text-center text-gray-600 mb-2">
-        <div>Sun</div><div>Mon</div><div>Tue</div>
-        <div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+  const nextMonth = () => {
+    setCurrentMonth(new Date(year, month + 1, 1));
+  };
+
+  const format = (date) =>
+    `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(
+      date.getDate()
+    ).padStart(2, "0")}`;
+
+  return (
+    <div className="p-5">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-3">
+        <button
+          onClick={prevMonth}
+          className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
+        >
+          ←
+        </button>
+
+        <h2 className="text-xl font-semibold">
+          {currentMonth.toLocaleString("default", { month: "long" })} {year}
+        </h2>
+
+        <button
+          onClick={nextMonth}
+          className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
+        >
+          →
+        </button>
       </div>
 
-      <div className="grid grid-cols-7 gap-2">
-        {days.map((day, idx) => {
+      {/* Day names */}
+      <div className="grid grid-cols-7 text-center text-gray-600 font-medium mb-2">
+        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
+          <div key={d}>{d}</div>
+        ))}
+      </div>
+
+      {/* Calendar grid */}
+      <div className="grid grid-cols-7 gap-1">
+        {days.map((day, index) => {
           if (!day) {
-            return <div key={idx} className="p-3"></div>;
+            return <div key={index} className="h-12"></div>;
           }
 
-          const dateString = today.format("YYYY-MM") + "-" + String(day).padStart(2, "0");
-          const isChecked = checkInDates.has(dateString);
-          const isToday = day === today.date();
+          const dateStr = format(day);
+
+          const isToday =
+            dateStr ===
+            format(new Date(today.getFullYear(), today.getMonth(), today.getDate()));
+
+          const hasLog = logDates.has(dateStr);
 
           return (
             <div
-              key={idx}
-              className={`
-                p-3 rounded-lg border
-                ${isToday ? "bg-blue-100 border-blue-500 font-bold" : ""}
-                ${isChecked ? "bg-green-200 border-green-600" : ""}
-              `}
+              key={index}
+              className={`h-12 flex items-center justify-center rounded border
+                ${isToday ? "bg-yellow-100 border-yellow-400" : ""}
+                ${hasLog ? "bg-blue-200 border-blue-500 font-semibold" : ""}
+                ${!isToday && !hasLog ? "bg-gray-100" : ""}
+                cursor-pointer hover:bg-gray-300`}
             >
-              {day}
+              {day.getDate()}
             </div>
           );
         })}

@@ -11,3 +11,8 @@ export const createLog = async (data) => {
   const res = await axios.post(`${API}/logs`, data);
   return res.data;
 };
+
+export const deleteLog = async (log_id) => {
+    const res = await axios.delete(`${API}/logs/${log_id}`);
+    return res.data;
+};

@@ -16,3 +16,10 @@ export const deleteHabit = async (id) => {
   const res = await axios.delete(`${API}/habits/${id}`);
   return res.data;
 };
+
+
+export const updateHabit = async (id, data) => {
+    const res = await axios.put(`${API}/habits/${id}`, data);
+    return res.data;
+  };
+  
