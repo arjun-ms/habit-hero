@@ -62,3 +62,12 @@ def create_log(log_data: HabitLogCreate, session: Session = Depends(get_session)
 @app.get("/habits/{habit_id}/logs", response_model=list[HabitLogRead])
 def get_logs(habit_id: int, session: Session = Depends(get_session)):
     return crud.get_logs_for_habit(session, habit_id)
+
+
+#- HABITS ANALYTICS
+
+@app.get("/habits/{habit_id}/analytics")
+def habit_analytics(habit_id: int, session: Session = Depends(get_session)):
+    logs = crud.get_logs_for_habit(session, habit_id)
+    analytics = crud.compute_analytics(logs)
+    return analytics
