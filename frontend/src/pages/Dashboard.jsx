@@ -8,37 +8,43 @@ function Dashboard() {
   const navigate = useNavigate();
 
   const loadHabits = () => {
-    getHabits().then((data) => {
-      console.log("Loaded habits:", data);
-      setHabits(data);
-    });
+    getHabits().then(setHabits);
   };
 
   useEffect(() => {
     loadHabits();
   }, []);
 
-  const handleOpen = (id) => navigate(`/habit/${id}`);
-  const handleDelete = async (id) => {
-    await deleteHabit(id);
-    loadHabits();
-  };
-
   return (
-    <div style={{ padding: "16px" }}>
-      <h2>Dashboard</h2>
-      <p>
-        <Link to="/create">+ Create a new habit</Link>
-      </p>
-      {habits.length === 0 && <p>No habits yet. Create one!</p>}
-      {habits.map((h) => (
-        <HabitCard
-          key={h.id}
-          habit={h}
-          onOpen={handleOpen}
-          onDelete={handleDelete}
-        />
-      ))}
+    <div className="max-w-3xl mx-auto p-6">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-3xl font-bold">Dashboard</h2>
+
+        <Link
+          to="/create"
+          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+        >
+          + New Habit
+        </Link>
+      </div>
+
+      {habits.length === 0 ? (
+        <p className="text-gray-600">No habits yet. Create one!</p>
+      ) : (
+        <div className="grid gap-4">
+          {habits.map((h) => (
+            <HabitCard
+              key={h.id}
+              habit={h}
+              onOpen={(id) => navigate(`/habit/${id}`)}
+              onDelete={async (id) => {
+                await deleteHabit(id);
+                loadHabits();
+              }}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
