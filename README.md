@@ -4,6 +4,10 @@ A simple, powerful habit tracker built with **React (Vite)** + **FastAPI** + **S
 
 ---
 
+## Live Site
+
+[click here to visit the live site](https://habit-hero-vert.vercel.app/)
+
 ## 🚀 Features
 
 ### ✅ Core Features
@@ -111,7 +115,7 @@ habit-hero/
 ### 📌 1. Clone the Project
 
 ```bash
-git clone https://github.com/yourusername/habit-hero.git
+git clone https://github.com/arjun-ms/habit-hero.git
 cd habit-hero
 ```
 
