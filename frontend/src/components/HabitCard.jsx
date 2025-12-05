@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-
 function HabitCard({ habit, onOpen, onDelete }) {
   return (
     <div className="border rounded-xl p-4 shadow hover:shadow-md transition bg-white">
@@ -14,6 +13,11 @@ function HabitCard({ habit, onOpen, onDelete }) {
 
       <p className="text-gray-700">{habit.frequency}</p>
       <p className="text-gray-500 text-sm">{habit.category}</p>
+
+      {/* ⭐ XP Display */}
+      <p className="text-sm text-purple-600 font-bold">
+        {habit.xp ?? 0} XP
+      </p>
 
       <div className="flex gap-2 mt-3">
         <button

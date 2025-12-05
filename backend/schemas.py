@@ -27,6 +27,12 @@ class HabitRead(HabitBase):
     start_date: date
     created_at: datetime
 
+class HabitUpdate(SQLModel):
+    name: Optional[str] = None
+    frequency: Optional[str] = None
+    category: Optional[str] = None
+    start_date: Optional[date] = None
+
 
 # -------------------------
 # HabitLog Schemas

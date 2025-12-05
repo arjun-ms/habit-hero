@@ -6,6 +6,7 @@ import { getHabitAnalytics } from "../api/analytics";
 import Calendar from "../components/Calendar";
 import { getMotivation } from "../api/motivation";
 import { analyzeNotes } from "../api/analysis";
+import { getBadges } from "../api/badges";
 
 function HabitDetails() {
   const { id } = useParams();
@@ -26,6 +27,14 @@ function HabitDetails() {
     neutral: "😐",
     negative: "😞",
   };
+
+  const [badges, setBadges] = useState([]);
+
+  useEffect(() => {
+    getBadges(habitId).then((data) => {
+      setBadges(data.badges);
+    });
+  }, [habitId]);
 
   const fetchMotivation = async () => {
     setLoadingMotivation(true);
@@ -185,6 +194,26 @@ function HabitDetails() {
           </div>
         ) : (
           <p className="text-gray-500">No analytics yet.</p>
+        )}
+      </div>
+
+      {/* Badges Card */}
+      <div className="bg-white p-5 rounded-xl shadow border">
+        <h2 className="text-lg font-semibold mb-3">Badges</h2>
+
+        {badges.length === 0 ? (
+          <p className="text-gray-500">No badges yet.</p>
+        ) : (
+          <div className="flex gap-3 flex-wrap">
+            {badges.map((b, i) => (
+              <span
+                key={i}
+                className="px-3 py-1 bg-yellow-200 text-yellow-800 rounded-full font-semibold"
+              >
+                {b}
+              </span>
+            ))}
+          </div>
         )}
       </div>
 

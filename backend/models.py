@@ -13,7 +13,8 @@ class Habit(SQLModel, table=True):
     start_date: date = Field(default_factory=date.today)
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
-
+    xp: int = Field(default=0)              # for gamification
+    
 class HabitLog(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     habit_id: int = Field(foreign_key="habit.id")
