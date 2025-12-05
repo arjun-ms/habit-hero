@@ -188,6 +188,18 @@ function HabitDetails() {
         )}
       </div>
 
+      {/* PDF download */}
+      <div className="mt-4">
+        <a
+          href={`http://127.0.0.1:8000/habit/${habitId}/report`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+        >
+          Download PDF Report
+        </a>
+      </div>
+
       <div className="bg-white p-5 rounded-xl shadow border">
         <h2 className="text-lg font-semibold mb-3">AI Motivation</h2>
 
