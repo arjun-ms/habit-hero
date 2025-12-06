@@ -7,6 +7,7 @@ import Calendar from "../components/Calendar";
 import { getMotivation } from "../api/motivation";
 import { analyzeNotes } from "../api/analysis";
 import { getBadges } from "../api/badges";
+import { API } from "../api/config";
 
 function HabitDetails() {
   const { id } = useParams();
@@ -220,7 +221,7 @@ function HabitDetails() {
       {/* PDF download */}
       <div className="mt-4">
         <a
-          href={`http://127.0.0.1:8000/habit/${habitId}/report`}
+          href={`${API}/habit/${habitId}/report`}
           target="_blank"
           rel="noopener noreferrer"
           className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
